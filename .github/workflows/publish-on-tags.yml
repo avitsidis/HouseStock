@@ -27,7 +27,7 @@ jobs:
       - name: Publish
         run: dotnet publish -c Release -r ${{ matrix.rid }} -p:PublishSingleFile=true --no-restore --no-build -o publish/ src/HouseStock.Api/HouseStock.Api.csproj
       - name: Create archive
-        run: zip -r -j HouseStock-${{ github.ref }}-${{ matrix.rid }}.zip publish/*
+        run: zip -r -j HouseStock-${GITHUB_REF##*/}-${{ matrix.rid }}.zip publish/*
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -35,7 +35,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
           tag_name: ${{ github.ref }}
-          release_name: Release-${{ github.ref }}-${{ matrix.rid }}
+          release_name: Release-${GITHUB_REF##*/}-${{ matrix.rid }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
@@ -46,5 +46,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} 
           asset_path: ./HouseStock-${GITHUB_REF##*/}-${{ matrix.rid }}.zip
-          asset_name: HouseStock-${{ github.ref }}-${{ matrix.rid }}.zip
+          asset_name: HouseStock-${GITHUB_REF##*/}-${{ matrix.rid }}.zip
           asset_content_type: application/zip
