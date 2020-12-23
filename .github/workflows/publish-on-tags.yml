@@ -20,6 +20,9 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.301
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=RELEASE_NAME::$(echo HouseStock-${GITHUB_REF##*/}-${{ matrix.rid }})  
       - name: Restore dependencies
         run: dotnet restore -r ${{ matrix.rid }} src/HouseStock.Api/HouseStock.Api.csproj
       - name: Build
@@ -27,7 +30,7 @@ jobs:
       - name: Publish
         run: dotnet publish -c Release -r ${{ matrix.rid }} -p:PublishSingleFile=true --no-restore --no-build -o publish/ src/HouseStock.Api/HouseStock.Api.csproj
       - name: Create archive
-        run: zip -r -j HouseStock-${GITHUB_REF##*/}-${{ matrix.rid }}.zip publish/*
+        run: zip -r -j ${{ steps.get_version.outputs.RELEASE_NAME }}.zip publish/*
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -35,7 +38,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
           tag_name: ${{ github.ref }}
-          release_name: ${{ format('HouseStock-{0}-{1}', context.payload.ref.replace(/\/refs\/tags\//, '', matrix.rid) }}
+          release_name: ${{ steps.get_version.outputs.RELEASE_NAME }}) }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
@@ -45,6 +48,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} 
-          asset_path: ${{ format('HouseStock-{0}-{1}.zip', context.payload.ref.replace(/\/refs\/tags\//, '', matrix.rid) }}
-          asset_name: ${{ format('HouseStock-{0}-{1}.zip', context.payload.ref.replace(/\/refs\/tags\//, '', matrix.rid) }}
+          asset_path: ${{ steps.get_version.outputs.RELEASE_NAME }}.zip
+          asset_name: ${{ steps.get_version.outputs.RELEASE_NAME }}.zip
           asset_content_type: application/zip
