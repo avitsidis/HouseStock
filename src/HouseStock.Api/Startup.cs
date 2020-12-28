@@ -19,6 +19,7 @@ namespace HouseStock.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            DataAccess.Startup.ConfigureServices(services, Configuration.GetConnectionString("stock"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

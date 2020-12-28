@@ -3,7 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseStock.Api", "src\HouseStock.Api\HouseStock.Api.csproj", "{4AFD01A6-5913-4727-8969-5089EB5E54FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseStock.Api", "src\HouseStock.Api\HouseStock.Api.csproj", "{4AFD01A6-5913-4727-8969-5089EB5E54FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.Presentation", "1.Presentation", "{C0484D3A-81AE-4ADC-8344-0E9AF4C53784}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2.DataAccess", "2.DataAccess", "{4952D8A7-C946-4CC7-82F3-44D31AE51EAC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3.Domain", "3.Domain", "{32F767D2-9388-47A1-A4B3-53F2C09966AE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseStock.DataAccess", "src\HouseStock.DataAccess\HouseStock.DataAccess.csproj", "{042B80B6-1FFD-44B5-9FA9-4824B8E51D88}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseStock.Domain", "src\HouseStock.Domain\HouseStock.Domain.csproj", "{3E94C315-089A-4621-A998-6B0FB28295F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseStock.DataAccess.Tools", "src\HouseStock.DataAccess.Tools\HouseStock.DataAccess.Tools.csproj", "{0B76A4F6-E045-4F69-A092-B58FBF42B35A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +27,27 @@ Global
 		{4AFD01A6-5913-4727-8969-5089EB5E54FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AFD01A6-5913-4727-8969-5089EB5E54FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4AFD01A6-5913-4727-8969-5089EB5E54FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{042B80B6-1FFD-44B5-9FA9-4824B8E51D88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{042B80B6-1FFD-44B5-9FA9-4824B8E51D88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{042B80B6-1FFD-44B5-9FA9-4824B8E51D88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{042B80B6-1FFD-44B5-9FA9-4824B8E51D88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E94C315-089A-4621-A998-6B0FB28295F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E94C315-089A-4621-A998-6B0FB28295F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E94C315-089A-4621-A998-6B0FB28295F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E94C315-089A-4621-A998-6B0FB28295F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B76A4F6-E045-4F69-A092-B58FBF42B35A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B76A4F6-E045-4F69-A092-B58FBF42B35A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B76A4F6-E045-4F69-A092-B58FBF42B35A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B76A4F6-E045-4F69-A092-B58FBF42B35A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4AFD01A6-5913-4727-8969-5089EB5E54FB} = {C0484D3A-81AE-4ADC-8344-0E9AF4C53784}
+		{042B80B6-1FFD-44B5-9FA9-4824B8E51D88} = {4952D8A7-C946-4CC7-82F3-44D31AE51EAC}
+		{3E94C315-089A-4621-A998-6B0FB28295F5} = {32F767D2-9388-47A1-A4B3-53F2C09966AE}
+		{0B76A4F6-E045-4F69-A092-B58FBF42B35A} = {4952D8A7-C946-4CC7-82F3-44D31AE51EAC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC3EB7B9-010A-4703-ABBB-47C18B994064}
