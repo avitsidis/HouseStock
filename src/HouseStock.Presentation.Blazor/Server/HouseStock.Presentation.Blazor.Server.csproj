@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>314af470-8e5e-4076-b9d9-103d4ef61c28</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="3.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\HouseStock.DataAccess\HouseStock.DataAccess.csproj" />
+    <ProjectReference Include="..\..\HouseStock.Domain\HouseStock.Domain.csproj" />
+    <ProjectReference Include="..\Client\HouseStock.Presentation.Blazor.Client.csproj" />
+    <ProjectReference Include="..\Shared\HouseStock.Presentation.Blazor.Shared.csproj" />
+  </ItemGroup>
+
+
+</Project>
