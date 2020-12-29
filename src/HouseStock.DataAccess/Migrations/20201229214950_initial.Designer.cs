@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HouseStock.DataAccess.Migrations
 {
     [DbContext(typeof(HouseStockDbContext))]
-    [Migration("20201228123647_initial")]
+    [Migration("20201229214950_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,7 +32,7 @@ namespace HouseStock.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
 
                     b.HasData(
                         new
@@ -78,7 +78,7 @@ namespace HouseStock.DataAccess.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Product");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("HouseStock.Domain.ProductInstance", b =>
@@ -124,7 +124,7 @@ namespace HouseStock.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Room");
+                    b.ToTable("Rooms");
                 });
 
             modelBuilder.Entity("HouseStock.Domain.Shelf", b =>
@@ -145,7 +145,7 @@ namespace HouseStock.DataAccess.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("Shelf");
+                    b.ToTable("Shelves");
                 });
 
             modelBuilder.Entity("HouseStock.Domain.Product", b =>

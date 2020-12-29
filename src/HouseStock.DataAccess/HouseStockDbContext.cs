@@ -8,6 +8,10 @@ namespace HouseStock.DataAccess
     public class HouseStockDbContext : DbContext
     {
         public DbSet<ProductInstance> ProductInstances { get; set; }
+        public DbSet<Room> Rooms { get; set; }
+        public DbSet<Shelf> Shelves { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Category> Categories { get; set; }
         public HouseStockDbContext(DbContextOptions<HouseStockDbContext> options)
             : base(options)
         {
