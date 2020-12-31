@@ -30,7 +30,7 @@ namespace HouseStock.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
 
                     b.HasData(
                         new
@@ -76,7 +76,7 @@ namespace HouseStock.DataAccess.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Product");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("HouseStock.Domain.ProductInstance", b =>
@@ -122,7 +122,7 @@ namespace HouseStock.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Room");
+                    b.ToTable("Rooms");
                 });
 
             modelBuilder.Entity("HouseStock.Domain.Shelf", b =>
@@ -143,7 +143,7 @@ namespace HouseStock.DataAccess.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("Shelf");
+                    b.ToTable("Shelves");
                 });
 
             modelBuilder.Entity("HouseStock.Domain.Product", b =>
