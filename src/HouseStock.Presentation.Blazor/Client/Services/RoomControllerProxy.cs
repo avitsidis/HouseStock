@@ -23,5 +23,11 @@ namespace HouseStock.Presentation.Blazor.Client.Services
             return await JsonSerializer.DeserializeAsync<AddRoomResponse>(responseStream);
         }
 
+        public async Task<GetAllRoomsResponse> GetAll()
+        {
+            var response = await client.GetFromJsonAsync<GetAllRoomsResponse>("room");
+            return response;
+        }
+
     }
 }
