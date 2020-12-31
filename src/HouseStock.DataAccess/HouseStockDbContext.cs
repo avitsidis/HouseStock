@@ -28,12 +28,15 @@ namespace HouseStock.DataAccess
         private void ConfigureNameProperties(ModelBuilder modelBuilder)
         {
             var entityTypesWithNameField = modelBuilder.Model.GetEntityTypes()
-                .Where(entityType => entityType.GetDeclaredProperties().Any(property => property.Name == nameof(NamedEntity.Name)));
+                .Where(entityType => typeof(NamedEntity).IsAssignableFrom(entityType.ClrType) &&
+                entityType.GetDeclaredProperties().Any(property => property.Name == nameof(NamedEntity.Name)));
             foreach (var entityTypeWithNameField in entityTypesWithNameField)
             {
                 var nameProperty = entityTypeWithNameField.GetDeclaredProperties().Single(property => property.Name == nameof(NamedEntity.Name));
                 nameProperty.SetMaxLength(100);
                 nameProperty.IsNullable = false;
+                var uniqueIndex = entityTypeWithNameField.AddIndex(nameProperty);
+                uniqueIndex.IsUnique = true;
             }
         }
     }
