@@ -1,0 +1,92 @@
+﻿@page "/add-shelf"
+
+@inject Services.RoomControllerProxy roomControllerService
+@inject Services.ShelfControllerProxy shelfControllerService
+
+@if (!isShelfCreated)
+{
+    <h1>Add a new shelf in your room</h1>
+
+    <EditForm Model="@request" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        @if (response.IsFail)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+                <p><strong>Error:</strong> A problem has been occurred while submitting your data.</p>
+                <p><strong>@response.Error.ErrorCode</strong>: @response.Error.Message</p>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        }
+        <span>Room</span>
+        @if (rooms == null)
+        {
+            <select class="form-control selectpicker" @bind="request.RoomId">
+                <option value="0">Loading rooms</option>
+            </select>
+        }
+        else
+        {
+            <select class="form-control selectpicker" @bind="request.RoomId">
+                <option value="0">Select a room</option>
+                @foreach (var item in rooms)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            </select>
+        }
+
+
+        Shelf name <InputText id="name" @bind-Value="request.ShelfName" />
+
+        <button type="submit" disabled="@submitDisabled" class="btn btn-primary">Add</button>
+    </EditForm>
+}
+else
+{
+<div>
+    <div class="alert alert-success alert-dismissible fade show">
+        <strong>Success!</strong> Shelf created with id @response.Data.Id
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    <button type="button" @onclick="Reset" class="btn btn-primary">Add another shelf</button>
+</div>
+}
+
+
+@code {
+
+    IEnumerable<GetAllRoomsResponseItem> rooms = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await roomControllerService.GetAll();
+        rooms = response.Rooms;
+        submitDisabled = false;
+    }
+
+    private bool submitDisabled = true;
+    private bool isShelfCreated = false;
+    private AddShelfRequest request = new AddShelfRequest();
+    private Response<AddShelfResponse> response = Response<AddShelfResponse>.EmptyResponse;
+
+    private async Task HandleValidSubmit()
+    {
+        submitDisabled = true;
+        response = await shelfControllerService.Add(request);
+        submitDisabled = false;
+        if (response.IsSuccess)
+        {
+            isShelfCreated = true;
+        }
+    }
+
+    private void Reset()
+    {
+        submitDisabled = false;
+        isShelfCreated = false;
+        request = new AddShelfRequest();
+        response = Response<AddShelfResponse>.EmptyResponse;
+    }
+
+}

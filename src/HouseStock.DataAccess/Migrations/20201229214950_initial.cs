@@ -9,7 +9,7 @@ namespace HouseStock.DataAccess.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Category",
+                name: "Categories",
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false)
@@ -18,11 +18,11 @@ namespace HouseStock.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Category", x => x.Id);
+                    table.PrimaryKey("PK_Categories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Room",
+                name: "Rooms",
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false)
@@ -31,11 +31,11 @@ namespace HouseStock.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Room", x => x.Id);
+                    table.PrimaryKey("PK_Rooms", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Product",
+                name: "Products",
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false)
@@ -46,17 +46,17 @@ namespace HouseStock.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Product", x => x.Id);
+                    table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Product_Category_CategoryId",
+                        name: "FK_Products_Categories_CategoryId",
                         column: x => x.CategoryId,
-                        principalTable: "Category",
+                        principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Shelf",
+                name: "Shelves",
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false)
@@ -66,11 +66,11 @@ namespace HouseStock.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Shelf", x => x.Id);
+                    table.PrimaryKey("PK_Shelves", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Shelf_Room_RoomId",
+                        name: "FK_Shelves_Rooms_RoomId",
                         column: x => x.RoomId,
-                        principalTable: "Room",
+                        principalTable: "Rooms",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -91,21 +91,21 @@ namespace HouseStock.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_ProductInstances", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductInstances_Product_ProductId",
+                        name: "FK_ProductInstances_Products_ProductId",
                         column: x => x.ProductId,
-                        principalTable: "Product",
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ProductInstances_Shelf_ShelfId",
+                        name: "FK_ProductInstances_Shelves_ShelfId",
                         column: x => x.ShelfId,
-                        principalTable: "Shelf",
+                        principalTable: "Shelves",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
-                table: "Category",
+                table: "Categories",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
@@ -114,11 +114,6 @@ namespace HouseStock.DataAccess.Migrations
                     { 3L, "Hygiene" },
                     { 99L, "Other" }
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Product_CategoryId",
-                table: "Product",
-                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductInstances_ProductId",
@@ -131,8 +126,13 @@ namespace HouseStock.DataAccess.Migrations
                 column: "ShelfId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Shelf_RoomId",
-                table: "Shelf",
+                name: "IX_Products_CategoryId",
+                table: "Products",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Shelves_RoomId",
+                table: "Shelves",
                 column: "RoomId");
         }
 
@@ -142,16 +142,16 @@ namespace HouseStock.DataAccess.Migrations
                 name: "ProductInstances");
 
             migrationBuilder.DropTable(
-                name: "Product");
+                name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Shelf");
+                name: "Shelves");
 
             migrationBuilder.DropTable(
-                name: "Category");
+                name: "Categories");
 
             migrationBuilder.DropTable(
-                name: "Room");
+                name: "Rooms");
         }
     }
 }

@@ -4,6 +4,19 @@ namespace HouseStock.Domain
 {
     public class Room : NamedEntity
     {
-        public virtual IList<Shelf> Shelves { get; set; }
+        protected Room()
+        {
+
+        }
+
+        public static Room Create(string name)
+        {
+            return new Room
+            {
+                Name = name
+            };
+        }
+
+        public virtual IList<Shelf> Shelves { get; set; } = new List<Shelf>();
     }
 }
