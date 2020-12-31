@@ -2,9 +2,8 @@
 using HouseStock.Domain;
 using HouseStock.Presentation.Blazor.Shared;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Threading.Tasks;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace HouseStock.Presentation.Blazor.Server.Controllers
 {
@@ -30,6 +29,22 @@ namespace HouseStock.Presentation.Blazor.Server.Controllers
             await houseStockDbContext.SaveChangesAsync();
             return Ok(new AddRoomResponse { RoomName = room.Name, Id = room.Id });
         }
+
+        [HttpGet]
+        public ActionResult<GetAllRoomsResponse> GetAll()
+        {
+            var all = houseStockDbContext.Rooms;
+            return Ok(new GetAllRoomsResponse
+            {
+                Rooms = houseStockDbContext.Rooms.Select(room => new GetAllRoomsResponseItem
+                {
+                    Id = room.Id,
+                    Name = room.Name
+                }).ToList()
+            });
+        }
+
+
 
     }
 }

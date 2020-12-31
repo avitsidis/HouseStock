@@ -1,5 +1,4 @@
-﻿using CSharpFunctionalExtensions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace HouseStock.Domain
 {
@@ -14,11 +13,10 @@ namespace HouseStock.Domain
         {
             return new Room
             {
-                Name = name,
-                Shelves = new List<Shelf>()
+                Name = name
             };
         }
 
-        public virtual IList<Shelf> Shelves { get; set; }
+        public virtual IList<Shelf> Shelves { get; set; } = new List<Shelf>();
     }
 }
