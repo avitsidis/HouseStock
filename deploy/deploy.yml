@@ -1,0 +1,50 @@
+- name: setup application to a specific version
+  hosts: all
+  remote_user: pi
+  become: yes
+
+  tasks:
+  - name: Check if Service Exists
+    stat: "path=/etc/systemd/system/kestrel-housestock-{{ env }}.service"
+    register: service_status
+
+  - name: Stop Service
+    service: "name=kestrel-housestock-{{ env }} state=stopped"
+    become: yes
+    become_user: root
+    when: service_status.stat.exists
+
+  - name: Clean destination
+    shell: /bin/rm -rf /var/housestock/{{ env }}/*
+    when: service_status.stat.exists
+
+  - name: Create application folder
+    file:
+      state: directory
+      path: "/var/housestock/{{ env }}/"
+      owner: pi
+      group: pi
+      mode: '0774'
+
+  - name: Download and deploy files
+    unarchive:
+      src: "https://github.com/avitsidis/HouseStock/releases/download/v{{ version }}/HouseStock-v{{ version }}-linux-arm.zip"
+      dest: "/var/housestock/{{ env }}/"
+      remote_src: yes
+
+  - name: create or replace systemd file
+    template:
+      src: templates/daemon.j2
+      dest: "/etc/systemd/system/kestrel-housestock-{{ env }}.service"
+      owner: pi
+      group: pi
+      mode: '0644'
+    become: yes
+    become_user: root
+
+  - name: Start the service
+    action: "service name=kestrel-housestock-{{ env }} state=started"
+    become: yes
+    become_user: root
+
+    # setup nginx
