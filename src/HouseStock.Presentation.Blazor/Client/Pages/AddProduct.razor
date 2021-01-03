@@ -1,0 +1,97 @@
+﻿@page "/add-product"
+
+@inject Services.ProductControllerProxy productControllerProxy
+
+@if (!isProductCreated)
+{
+    <h1>Add a new Product</h1>
+
+    <EditForm Model="@request" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        @if (response.IsFail)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+                <p><strong>Error:</strong> A problem has been occurred while submitting your data.</p>
+                <p><strong>@response.Error.ErrorCode</strong>: @response.Error.Message</p>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        }
+
+        <div>
+            Product name <InputText id="name" @bind-Value="request.Name" />
+        </div>
+        <div>
+            Description <InputText id="description" @bind-Value="request.Description" />
+        </div>
+        <div>
+            <span>Category</span>
+            @if (categories == null)
+            {
+                <select class="form-control selectpicker" @bind="request.CategoryId">
+                    <option value="0">Loading categories</option>
+                </select>
+            }
+            else
+            {
+                <select class="form-control selectpicker" @bind="request.CategoryId">
+                    <option value="0">Select a Category</option>
+                    @foreach (var item in categories)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                </select>
+            }
+        </div>
+
+        <button type="submit" disabled="@submitDisabled" class="btn btn-primary">Add</button>
+    </EditForm>
+}
+else
+{
+    <div>
+        <div class="alert alert-success alert-dismissible fade show">
+            <strong>Success!</strong> Product sucessfully created
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        <button type="button" @onclick="Reset" class="btn btn-primary">Add another product</button>
+    </div>
+}
+
+
+@code {
+
+    IEnumerable<GetAllCategoriesResponseItem> categories = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await productControllerProxy.GetAllCategories();
+        categories = response.Categories;
+        submitDisabled = false;
+    }
+
+    private bool submitDisabled = true;
+    private bool isProductCreated = false;
+    private AddProductRequest request = new AddProductRequest();
+    private Response<AddProductResponse> response = Response<AddProductResponse>.EmptyResponse;
+
+    private async Task HandleValidSubmit()
+    {
+        submitDisabled = true;
+        response = await productControllerProxy.Add(request);
+        submitDisabled = false;
+        if (response.IsSuccess)
+        {
+            isProductCreated = true;
+        }
+    }
+
+    private void Reset()
+    {
+        submitDisabled = false;
+        isProductCreated = false;
+        request = new AddProductRequest();
+        response = Response<AddProductResponse>.EmptyResponse;
+    }
+
+}
