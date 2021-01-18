@@ -42,11 +42,11 @@ jobs:
         with:
           dotnet-version: 3.1.301
       - name: Restore dependencies
-        run: dotnet restore -r ${{ matrix.rid }} src/HouseStock.Api/HouseStock.Api.csproj
+        run: dotnet restore -r ${{ matrix.rid }} src/HouseStock.Presentation.Blazor/Server/HouseStock.Presentation.Blazor.Server.csproj
       - name: Build
-        run: dotnet build -c Release -r ${{ matrix.rid }} src/HouseStock.Api/HouseStock.Api.csproj
+        run: dotnet build -c Release -r ${{ matrix.rid }} src/HouseStock.Presentation.Blazor/Server/HouseStock.Presentation.Blazor.Server.csproj
       - name: Publish
-        run: dotnet publish -c Release -r ${{ matrix.rid }} -p:PublishSingleFile=true --no-restore --no-build -o publish/ src/HouseStock.Api/HouseStock.Api.csproj
+        run: dotnet publish -c Release -r ${{ matrix.rid }} -p:PublishSingleFile=true --no-restore --no-build -o publish/ src/HouseStock.Presentation.Blazor/Server/HouseStock.Presentation.Blazor.Server.csproj
       - name: Create archive
         run: zip -r -j ${{ needs.create-release.outputs.release }}-${{ matrix.rid }}.zip publish/*
       - name: Upload Release Asset
