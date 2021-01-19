@@ -1,0 +1,18 @@
+[Unit]
+Description=HouseStock App for {{ env }}
+
+[Service]
+WorkingDirectory=/var/housestock/{{ env }}/
+ExecStart=/var/housestock/{{ env }}/HouseStock.Presentation.Blazor.Server
+Restart=always
+# Restart service after 10 seconds if the dotnet service crashes:
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=/housestock-{{ env }}
+User=pi
+Environment=ASPNETCORE_ENVIRONMENT={{ env }}
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+Environment=CUSTOMCONNSTR_stock="Server=192.168.2.1;Database=housestock-{{ env }};user=housestock-{{ env }};password={{ db_password }};"
+
+[Install]
+WantedBy=multi-user.target
