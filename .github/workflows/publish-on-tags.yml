@@ -48,7 +48,7 @@ jobs:
       - name: Publish
         run: dotnet publish -c Release -r ${{ matrix.rid }} -p:PublishSingleFile=true --no-restore --no-build -o publish/ src/HouseStock.Presentation.Blazor/Server/HouseStock.Presentation.Blazor.Server.csproj
       - name: Create archive
-        run: zip -r -j ${{ needs.create-release.outputs.release }}-${{ matrix.rid }}.zip publish/*
+        run: cd publish; zip -r ${{ needs.create-release.outputs.release }}-${{ matrix.rid }}.zip .
       - name: Upload Release Asset
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1
@@ -56,6 +56,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }} 
-          asset_path: ${{ needs.create-release.outputs.release }}-${{ matrix.rid }}.zip
+          asset_path: ./publish/${{ needs.create-release.outputs.release }}-${{ matrix.rid }}.zip
           asset_name: ${{ needs.create-release.outputs.release }}-${{ matrix.rid }}.zip
           asset_content_type: application/zip
