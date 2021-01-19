@@ -3,7 +3,7 @@ Description=HouseStock App for {{ env }}
 
 [Service]
 WorkingDirectory=/var/housestock/{{ env }}/
-ExecStart=/var/housestock/{{ env }}/HouseStock.Api
+ExecStart=/var/housestock/{{ env }}/HouseStock.Presentation.Blazor.Server
 Restart=always
 # Restart service after 10 seconds if the dotnet service crashes:
 RestartSec=10
