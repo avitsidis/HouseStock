@@ -3,14 +3,16 @@ using System;
 using HouseStock.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HouseStock.DataAccess.Migrations
 {
     [DbContext(typeof(HouseStockDbContext))]
-    partial class HouseStockDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210120212221_AddPharmacyProductCategory")]
+    partial class AddPharmacyProductCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
