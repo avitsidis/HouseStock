@@ -8,7 +8,7 @@ namespace HouseStock.DataAccess.TypeConfigurations
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {
-            builder.HasData(Category.Drinks, Category.Food, Category.Hygiene, Category.Other);
+            builder.HasData(Category.Drinks, Category.Food, Category.Hygiene, Category.Other, Category.Pharmacy);
         }
     }
 }
