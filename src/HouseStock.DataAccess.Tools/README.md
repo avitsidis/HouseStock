@@ -10,20 +10,25 @@ Powershell: `$env:CUSTOMCONNSTR_stock = "Server=mysqlserver;Database=stock-dev;u
 
 ## Add a migration
 
+cd .\HouseStock.DataAccess\
 dotnet ef migrations add MIGRATION_NAME --startup-project ..\HouseStock.DataAccess.Tools\HouseStock.DataAccess.Tools.csproj
 
 ## Remove migrations
 
+cd .\HouseStock.DataAccess\
 dotnet ef migrations remove --startup-project ..\HouseStock.DataAccess.Tools\HouseStock.DataAccess.Tools.csproj
 
 ## update database
 
+cd .\HouseStock.DataAccess\
 dotnet ef database update --startup-project ..\HouseStock.DataAccess.Tools\HouseStock.DataAccess.Tools.csproj
 
 ## update database to migration
 
+cd .\HouseStock.DataAccess\
 dotnet ef database update MIGRATION_NAME --startup-project ..\HouseStock.DataAccess.Tools\HouseStock.DataAccess.Tools.csproj
 
 ## remove database objects
 
+cd .\HouseStock.DataAccess\
 dotnet ef database update 0 --startup-project ..\HouseStock.DataAccess.Tools\HouseStock.DataAccess.Tools.csproj
