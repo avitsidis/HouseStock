@@ -2,8 +2,10 @@
 using HouseStock.Domain;
 using HouseStock.Presentation.Blazor.Shared;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using System.Threading.Tasks;
+using System.Linq;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace HouseStock.Presentation.Blazor.Server.Controllers
 {
@@ -34,6 +36,27 @@ namespace HouseStock.Presentation.Blazor.Server.Controllers
             houseStockDbContext.Products.Add(product);
             await houseStockDbContext.SaveChangesAsync();
             return Ok(new AddProductResponse { ProductId = product.Id });
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<SearchProductResponse>> Search([FromQuery] string partName, int limit = 20)
+        {
+            partName = partName?.ToLower() ?? "";
+            var results = await houseStockDbContext.Products
+                .Include(p => p.Category)
+                .Where(p => p.Name.ToLower().Contains(partName))
+                .Take(limit)
+                .ToListAsync();
+            
+          return Ok(new SearchProductResponse { 
+                Products = results.Select(r => new SearchProductItem { 
+                    Id = r.Id,
+                    Description = r.Description,
+                    Name = r.Name,
+                    CategoryId = r.Category.Id,
+                    CategoryName = r.Category.Name
+                }).ToList() 
+            });
         }
 
 

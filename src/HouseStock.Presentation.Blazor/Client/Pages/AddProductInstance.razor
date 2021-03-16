@@ -1,0 +1,160 @@
+﻿@page "/add-product-instance"
+
+@inject Services.RoomControllerProxy roomControllerProxy
+@inject Services.ProductControllerProxy productControllerProxy
+@inject ILogger<AddProductInstance> logger;
+
+<RadzenSteps @ref="steps">
+    <Steps>
+
+        <RadzenStepsItem Text="Product">
+
+            <RadzenTextBox @bind-Value=@search Change=@OnSearch @oninput=@(args => OnSearch(args.Value.ToString())) />
+            <RadzenGrid @ref="datagrid" EmptyText="Loading Products" RowSelect=ProductSelected Count="@count" Data="@products" AllowSorting="false" AllowFiltering="false" AllowPaging="false" TItem="SearchProductItem" ColumnWidth="200px">
+                <Columns>
+                    <RadzenGridColumn TItem="SearchProductItem" Property="Name" Title="Product Name" />
+                    <RadzenGridColumn TItem="SearchProductItem" Property="CategoryName" Title="Category" />
+                </Columns>
+            </RadzenGrid>
+
+        </RadzenStepsItem>
+        <RadzenStepsItem Text="Shelf">
+
+            <div>
+                <RadzenTree Change=@OnShelfTreeChange Data=@rooms Style="width: 100%; height: 300px">
+                    <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Shelves">
+                        <Template>
+                            <strong>@((context.Value as GetAllRoomsResponseItem).Name)</strong>
+                        </Template>
+                    </RadzenTreeLevel>
+                    <RadzenTreeLevel TextProperty="Name" HasChildren=@(p => false) />
+                </RadzenTree>
+
+            </div>
+        </RadzenStepsItem>
+        <RadzenStepsItem Text="Add new instance">
+            @if (selectedProduct == null || selectedShelf == null)
+            {
+                @if (selectedProduct == null)
+                {
+                    <p>Please select a product first</p>
+                }
+                else
+                {
+                    <p>Please select a shelf first</p>
+                }
+            }
+            else
+            {
+                @if (response.IsFail)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <p><strong>Error:</strong> A problem has been occurred while submitting your data.</p>
+                        <p><strong>@response.Error.ErrorCode</strong>: @response.Error.Message</p>
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    </div>
+                }
+
+                <div>
+                    ExpirationDate
+                    <RadzenDatePicker @bind-Value=@request.ExpirationDate DateFormat="dd/MM/yyyy" />
+                </div>
+                <div>
+                    Amount
+                    <RadzenNumeric @bind-Value=@request.Amount TValue="decimal" Placeholder="0" Step="1" />
+                    <RadzenSelectBar @bind-Value=@request.AmountUnit TValue="AmountUnit">
+                        <Items>
+                            <RadzenSelectBarItem Text="Gram" Value="AmountUnit.Gram" />
+                            <RadzenSelectBarItem Text="Liter" Value="AmountUnit.Liter" />
+                            <RadzenSelectBarItem Text="Item" Value="AmountUnit.Item" />
+                        </Items>
+                    </RadzenSelectBar>
+                </div>
+                <RadzenButton Click=HandleValidSubmit Text="Button" Style="margin-bottom: 20px; width: 150px" />
+            }
+        </RadzenStepsItem>
+
+    </Steps>
+</RadzenSteps>
+
+
+
+
+@code {
+    SearchProductItem selectedProduct;
+    RadzenGrid<SearchProductItem> datagrid;
+    RadzenSteps steps;
+    RadzenSelectBar<long> roomsSelect;
+    RadzenSelectBar<long> shelvesSelect;
+    AddProductInstanceRequest request = new AddProductInstanceRequest();
+    private Response<AddProductInstanceResponse> response = Response<AddProductInstanceResponse>.EmptyResponse;
+    string search = "";
+    bool submitDisabled = true;
+
+    int count;
+    List<SearchProductItem> products = new List<SearchProductItem>();
+    List<GetAllRoomsResponseItem> rooms = new List<GetAllRoomsResponseItem>();
+    ShelfItem selectedShelf;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts(null);
+        var response = await roomControllerProxy.GetAll();
+        rooms = response.Rooms;
+    }
+
+    void OnShelfTreeChange(TreeEventArgs args)
+    {
+        if (args.Value is ShelfItem)
+        {
+            selectedShelf = (ShelfItem)args.Value;
+        }
+    }
+
+    async Task OnSearch(string productName)
+    {
+        logger.LogDebug($"searching {productName}");
+        if (productName != null)
+        {
+            search = productName;
+
+            await LoadProducts(null);
+        }
+    }
+
+    async Task LoadProducts(LoadDataArgs args)
+    {
+        var filter = search ?? "";
+
+        var result = await productControllerProxy.Search(filter, 20);
+        products.Clear();
+        products.AddRange(result.Data.Products);
+        count = products.Count;
+
+        logger.LogDebug($"count= {count}");
+        logger.LogDebug($"products.FirstOrDefault().Name= {products.FirstOrDefault().Name}");
+
+        await datagrid.Reload();
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    void ProductSelected(SearchProductItem selectedProduct)
+    {
+        this.selectedProduct = selectedProduct;
+    }
+
+
+    private async Task HandleValidSubmit()
+    {
+        submitDisabled = true;
+        request.ShelfId = selectedShelf.Id;
+        response = await productControllerProxy.Add(selectedProduct.Id, request);
+        submitDisabled = false;
+        if (response.IsSuccess)
+        {
+
+        }
+    }
+
+}
