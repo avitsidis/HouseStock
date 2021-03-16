@@ -11,5 +11,12 @@ namespace HouseStock.Presentation.Blazor.Shared
     {
         public string Name { get; set; }
         public long Id { get; set; }
+        public List<ShelfItem> Shelves { get; set; }
+    }
+
+    public class ShelfItem
+    {
+        public string Name { get; set; }
+        public long Id { get; set; }
     }
 }

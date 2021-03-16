@@ -1,4 +1,5 @@
 ﻿using HouseStock.Presentation.Blazor.Shared;
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -11,10 +12,12 @@ namespace HouseStock.Presentation.Blazor.Client.Services
     public class ProductControllerProxy
     {
         private readonly HttpClient client;
+        private readonly ILogger<ProductControllerProxy> logger;
 
-        public ProductControllerProxy(HttpClient client)
+        public ProductControllerProxy(HttpClient client, ILogger<ProductControllerProxy> logger)
         {
             this.client = client;
+            this.logger = logger;
         }
 
         public async Task<GetAllCategoriesResponse> GetAllCategories()
@@ -39,5 +42,43 @@ namespace HouseStock.Presentation.Blazor.Client.Services
             }
 
         }
+
+        public async Task<Response<AddProductInstanceResponse>> Add(long productId, AddProductInstanceRequest addProductInstanceRequest)
+        {
+            try
+            {
+                var response = await client.PostAsJsonAsync($"product/{productId}/instances", addProductInstanceRequest);
+                response.EnsureSuccessStatusCode();
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+                var result = await JsonSerializer.DeserializeAsync<AddProductInstanceResponse>(responseStream);
+                return Response<AddProductInstanceResponse>.Success(result);
+            }
+            catch (System.Exception e)
+            {
+                return Response<AddProductInstanceResponse>.Fail("ADD_PRODUCT_INSTANCE_ERROR", e);
+            }
+
+        }
+
+        public async Task<Response<SearchProductResponse>> Search(string name, int limit = 5)
+        {
+            try
+            {
+                var response = await client.GetAsync($"product?partName={name}&limit={limit}");
+                response.EnsureSuccessStatusCode();
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+                var result = await JsonSerializer.DeserializeAsync<SearchProductResponse>(responseStream,new JsonSerializerOptions() { 
+                PropertyNameCaseInsensitive = true
+                });
+                logger.LogDebug($"result.Products.Count = {result.Products.Count}");
+                return Response<SearchProductResponse>.Success(result);
+            }
+            catch (System.Exception e)
+            {
+                logger.LogError($"error = {e.Message}");
+                return Response<SearchProductResponse>.Fail("SEARCH_PRODUCT_ERROR", e);
+            }
+        }
+
     }
 }
