@@ -4,6 +4,11 @@ namespace HouseStock.Domain
 {
     public class ProductInstance : Entity
     {
+        public ProductInstance()
+        {
+            InventoryDate = DateTime.Now;
+        }
+        public virtual DateTime InventoryDate { get; set; }
         public virtual DateTime ExpirationDate { get; set; }
         public virtual Shelf Shelf { get; set; }
         public virtual Product Product { get; set; }
