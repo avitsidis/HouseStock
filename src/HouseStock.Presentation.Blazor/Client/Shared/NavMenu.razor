@@ -1,5 +1,7 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">HouseStock</a>
+﻿@inject Services.VersionControllerProxy versionController
+
+<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">HouseStock @ServerVersion</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -33,7 +35,7 @@
             </NavLink>
         </li>
 
-        
+
     </ul>
 </div>
 
@@ -41,9 +43,15 @@
     private bool collapseNavMenu = true;
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private string ServerVersion = null;
 
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ServerVersion = await versionController.GetServerVersion();
     }
 }

@@ -21,6 +21,7 @@ namespace HouseStock.Presentation.Blazor.Client
             builder.Services.AddTransient<RoomControllerProxy>();
             builder.Services.AddTransient<ShelfControllerProxy>();
             builder.Services.AddTransient<ProductControllerProxy>();
+            builder.Services.AddScoped<VersionControllerProxy>();
 
             await builder.Build().RunAsync();
         }
