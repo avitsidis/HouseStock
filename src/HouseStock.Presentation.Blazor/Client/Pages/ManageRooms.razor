@@ -1,0 +1,36 @@
+﻿@page "/manage-rooms"
+
+@inject Services.RoomControllerProxy roomControllerService
+<h1>Manage Rooms</h1>
+
+<div class="row">
+    <div class="col-xl-6" style="margin-bottom: 16px">
+        <div class="row">
+            <div class="col-md-6" style="margin-bottom: 16px">
+                <RadzenTree Data=@rooms Style="width: 100%; height: 300px" @bind-Value=@selectedRoom>
+                    <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Shelves">
+                        <Template>
+                            <strong>@((context.Value as GetAllRoomsResponseItem).Name)</strong>
+                            @*<RadzenButton Click=@(args => OnClick("Button with icon")) Icon="mode_edit" Style="margin-bottom: 20px; width: 80px" />*@
+                        </Template>
+                    </RadzenTreeLevel>
+                    <RadzenTreeLevel TextProperty="Name" HasChildren=@(shelf => false) />
+                </RadzenTree>
+                <RadzenButton Text="Add a new Room" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    IEnumerable<GetAllRoomsResponseItem> rooms = null;
+    GetAllRoomsResponseItem selectedRoom = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await roomControllerService.GetAll();
+        rooms = response.Rooms;
+    }
+
+}
