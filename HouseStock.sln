@@ -13,13 +13,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseStock.DataAccess", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseStock.Domain", "src\HouseStock.Domain\HouseStock.Domain.csproj", "{3E94C315-089A-4621-A998-6B0FB28295F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseStock.DataAccess.Tools", "src\HouseStock.DataAccess.Tools\HouseStock.DataAccess.Tools.csproj", "{0B76A4F6-E045-4F69-A092-B58FBF42B35A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseStock.DataAccess.Tools", "src\HouseStock.DataAccess.Tools\HouseStock.DataAccess.Tools.csproj", "{0B76A4F6-E045-4F69-A092-B58FBF42B35A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseStock.Presentation.Blazor.Server", "src\HouseStock.Presentation.Blazor\Server\HouseStock.Presentation.Blazor.Server.csproj", "{9F354B62-2473-4786-806B-9BECBB2E49AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseStock.Presentation.Blazor.Server", "src\HouseStock.Presentation.Blazor\Server\HouseStock.Presentation.Blazor.Server.csproj", "{9F354B62-2473-4786-806B-9BECBB2E49AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseStock.Presentation.Blazor.Client", "src\HouseStock.Presentation.Blazor\Client\HouseStock.Presentation.Blazor.Client.csproj", "{DB61446B-028C-43C5-ADB3-B63363075AAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseStock.Presentation.Blazor.Client", "src\HouseStock.Presentation.Blazor\Client\HouseStock.Presentation.Blazor.Client.csproj", "{DB61446B-028C-43C5-ADB3-B63363075AAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseStock.Presentation.Blazor.Shared", "src\HouseStock.Presentation.Blazor\Shared\HouseStock.Presentation.Blazor.Shared.csproj", "{59013FF9-50C4-4F0F-A322-F5F82DB24D9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseStock.Presentation.Blazor.Shared", "src\HouseStock.Presentation.Blazor\Shared\HouseStock.Presentation.Blazor.Shared.csproj", "{59013FF9-50C4-4F0F-A322-F5F82DB24D9B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

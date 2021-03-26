@@ -1,0 +1,43 @@
+﻿@page "/inventory"
+
+@inject Services.ProductControllerProxy productControllerProxy
+<h3>Inventory</h3>
+
+@if (items == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <RadzenGrid Data=@items AllowFiltering="true" AllowPaging="true" AllowSorting="true" TItem="InventoryItem" ColumnWidth="200px">
+        <Columns>
+            <RadzenGridColumn TItem="InventoryItem" Property="ProductName" />
+            <RadzenGridColumn TItem="InventoryItem" Property="ExpirationDate" />
+            <RadzenGridColumn TItem="InventoryItem" Property="Amount" />
+            <RadzenGridColumn TItem="InventoryItem" Property="AmountUnit" />
+            <RadzenGridColumn TItem="InventoryItem" Property="InventoryDate" />
+            <RadzenGridColumn TItem="InventoryItem" Property="ShelfName" />
+            <RadzenGridColumn TItem="InventoryItem" Property="RoomName" />
+            <RadzenGridColumn TItem="InventoryItem" Property="CategoryName" />
+        </Columns>
+    </RadzenGrid>
+}
+
+
+@code {
+    private IEnumerable<InventoryItem> items = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await productControllerProxy.GetInventory();
+        if (response.IsSuccess)
+        {
+            items = response.Data.Items;
+        }
+        else
+        {
+            throw new Exception(response.Error.Message + "-" + response.Error.ErrorCode);
+        }
+
+    }
+}

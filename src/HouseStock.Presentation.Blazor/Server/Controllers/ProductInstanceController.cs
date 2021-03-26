@@ -4,6 +4,8 @@ using HouseStock.Presentation.Blazor.Shared;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace HouseStock.Presentation.Blazor.Server.Controllers
 {
@@ -44,6 +46,33 @@ namespace HouseStock.Presentation.Blazor.Server.Controllers
             return Ok(new AddProductInstanceResponse { ProductInstanceId = instance.Id });
         }
 
+        [HttpGet]
+        [Route("/product/all/instances")]
+        public async Task<ActionResult<GetInventoryResponse>> GetAll()
+        {
+            var items = await houseStockDbContext
+                .ProductInstances
+                .Include(pi => pi.Product)
+                .Include(pi => pi.Shelf)
+                .Include(pi => pi.Shelf.Room)
+                .Include(pi => pi.Product.Category).ToListAsync();
+            return Ok(new GetInventoryResponse {
+                Items = items.Select(i => new InventoryItem {
+                    Amount = i.Amount,
+                    AmountUnit = (AmountUnit)Enum.Parse(typeof(Unit), i.AmountUnit.ToString()),
+                    CategoryId = i.Product.Category.Id,
+                    CategoryName = i.Product.Category.Name,
+                    ExpirationDate = i.ExpirationDate,
+                    InventoryDate = i.InventoryDate,
+                    ProductId = i.Product.Id,
+                    ProductName = i.Product.Name,
+                    ProductInstanceId = i.Id,
+                    RoomName = i.Shelf.Room.Name,
+                    ShelfId = i.Shelf.Id,
+                    ShelfName = i.Shelf.Name
+                    }).ToList()
+                });
+        }
 
     }
 }

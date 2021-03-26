@@ -1,7 +1,5 @@
 ﻿using HouseStock.Presentation.Blazor.Shared;
 using Microsoft.Extensions.Logging;
-using System;
-using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -77,6 +75,28 @@ namespace HouseStock.Presentation.Blazor.Client.Services
             {
                 logger.LogError($"error = {e.Message}");
                 return Response<SearchProductResponse>.Fail("SEARCH_PRODUCT_ERROR", e);
+            }
+        }
+
+        public async Task<Response<GetInventoryResponse>> GetInventory()
+        {
+            ///product/all/instances
+            try
+            {
+                var response = await client.GetAsync($"product/all/instances");
+                response.EnsureSuccessStatusCode();
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+                var result = await JsonSerializer.DeserializeAsync<GetInventoryResponse>(responseStream, new JsonSerializerOptions()
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                logger.LogDebug($"result.Items.Count = {result.Items.Count}");
+                return Response<GetInventoryResponse>.Success(result);
+            }
+            catch (System.Exception e)
+            {
+                logger.LogError($"error = {e.Message}");
+                return Response<GetInventoryResponse>.Fail("GET_INVENTORY_ERROR", e);
             }
         }
 
