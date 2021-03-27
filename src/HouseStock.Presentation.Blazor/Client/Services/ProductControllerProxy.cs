@@ -36,6 +36,7 @@ namespace HouseStock.Presentation.Blazor.Client.Services
             }
             catch (System.Exception e)
             {
+                logger.LogError(e.Message);
                 return Response<AddProductResponse>.Fail("ADD_PRODUCT_ERROR", e);
             }
 

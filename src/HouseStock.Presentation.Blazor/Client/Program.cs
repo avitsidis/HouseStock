@@ -2,6 +2,7 @@ using HouseStock.Presentation.Blazor.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Radzen;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -22,6 +23,12 @@ namespace HouseStock.Presentation.Blazor.Client
             builder.Services.AddTransient<ShelfControllerProxy>();
             builder.Services.AddTransient<ProductControllerProxy>();
             builder.Services.AddScoped<VersionControllerProxy>();
+
+
+            builder.Services.AddScoped<DialogService>();
+            builder.Services.AddScoped<NotificationService>();
+            builder.Services.AddScoped<TooltipService>();
+            builder.Services.AddScoped<ContextMenuService>();
 
             await builder.Build().RunAsync();
         }
