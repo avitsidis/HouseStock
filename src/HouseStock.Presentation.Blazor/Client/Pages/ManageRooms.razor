@@ -1,6 +1,7 @@
 ﻿@page "/manage-rooms"
 
 @inject Services.RoomControllerProxy roomControllerService
+@inject NotificationService NotificationService
 <h1>Manage Rooms</h1>
 
 <div class="row">
@@ -16,21 +17,75 @@
                     </RadzenTreeLevel>
                     <RadzenTreeLevel TextProperty="Name" HasChildren=@(shelf => false) />
                 </RadzenTree>
-                <RadzenButton Text="Add a new Room" />
+                <RadzenButton Text="Add a new Room" Click=@(args => AddRoom()) />
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6" style="margin-bottom: 16px">
+        <div class="row">
+            <div class="col-md-6" style="margin-bottom: 16px">
+                @if (addRoom)
+                {
+                    <h2>Add a new Room</h2>
+                    <EditForm Model="@newRoom" OnValidSubmit="@HandleAddRoom">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <div class="form-group">
+                            <label for="room-name">Name</label>
+                            <InputText id="room-name" @bind-Value="newRoom.RoomName" />
+                        </div>
+                        <button type="submit" disabled=@submitDisabled>Add</button>
+                    </EditForm>
+                }
+                else if (addShelf)
+                {
+                    <h2>Add a new Shelf in @selectedRoom.Name</h2>
+                }
             </div>
         </div>
     </div>
 </div>
 
 @code {
-
+    bool submitDisabled = false;
+    bool addRoom = false;
+    bool addShelf = false;
     IEnumerable<GetAllRoomsResponseItem> rooms = null;
     GetAllRoomsResponseItem selectedRoom = null;
+    AddRoomRequest newRoom = new AddRoomRequest();
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
+    {
+        return Load();
+    }
+
+    private async Task Load()
     {
         var response = await roomControllerService.GetAll();
         rooms = response.Rooms;
     }
 
+    protected void AddRoom()
+    {
+        newRoom = new AddRoomRequest();
+        addRoom = true;
+    }
+
+    private async Task HandleAddRoom()
+    {
+        submitDisabled = true;
+        var response = await roomControllerService.AddRoom(newRoom);
+        if (response.IsSuccess)
+        {
+            addRoom = false;
+            NotificationService.Notify(NotificationSeverity.Success, "new Room created", $"{response.Data.RoomName}", 2000);
+            await Load();
+        }
+        else
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Could not add room", response.Error.Message,5000);
+        }
+        submitDisabled = false;
+    }
 }

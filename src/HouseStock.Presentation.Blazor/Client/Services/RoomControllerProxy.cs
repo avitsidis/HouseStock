@@ -15,12 +15,25 @@ namespace HouseStock.Presentation.Blazor.Client.Services
             this.client = client;
         }
 
-        public async Task<AddRoomResponse> AddRoom(AddRoomRequest roomRequest)
+        public async Task<Response<AddRoomResponse>> AddRoom(AddRoomRequest roomRequest)
         {
-            var response = await client.PostAsJsonAsync("room", roomRequest);
-            response.EnsureSuccessStatusCode();
-            using var responseStream = await response.Content.ReadAsStreamAsync();
-            return await JsonSerializer.DeserializeAsync<AddRoomResponse>(responseStream);
+            try
+            {
+                var response = await client.PostAsJsonAsync("room", roomRequest);
+                response.EnsureSuccessStatusCode();
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+                var data = await JsonSerializer.DeserializeAsync<AddRoomResponse>(responseStream, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                return Response<AddRoomResponse>.Success(data);
+            }
+            catch (System.Exception e)
+            {
+
+                return Response<AddRoomResponse>.Fail("ROOM_ADD_ERROR", e);
+            }
+
         }
 
         public async Task<GetAllRoomsResponse> GetAll()
