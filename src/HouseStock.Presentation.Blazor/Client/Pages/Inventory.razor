@@ -1,6 +1,8 @@
 ﻿@page "/inventory"
 
 @inject Services.ProductControllerProxy productControllerProxy
+@inject Services.ProductInstanceControllerProxy productInstanceControllerProxy
+@inject NotificationService notificationService
 <h3>Inventory</h3>
 
 @if (items == null)
@@ -19,6 +21,11 @@ else
             <RadzenGridColumn TItem="InventoryItem" Property="ShelfName" />
             <RadzenGridColumn TItem="InventoryItem" Property="RoomName" />
             <RadzenGridColumn TItem="InventoryItem" Property="CategoryName" />
+            <RadzenGridColumn TItem="InventoryItem" Property="ProductInstanceId" Title="Consumed?">
+                <Template Context="data">
+                    <RadzenButton Text="Consumed" Click="@(args => ConsumeAsync(data.ProductInstanceId, data.ProductName))" />
+                </Template>
+            </RadzenGridColumn>
         </Columns>
     </RadzenGrid>
 }
@@ -27,7 +34,12 @@ else
 @code {
     private IEnumerable<InventoryItem> items = null;
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
+    {
+        return LoadInventory();
+    }
+
+    private async Task LoadInventory()
     {
         var response = await productControllerProxy.GetInventory();
         if (response.IsSuccess)
@@ -38,6 +50,19 @@ else
         {
             throw new Exception(response.Error.Message + "-" + response.Error.ErrorCode);
         }
+    }
 
+    private async Task ConsumeAsync(long id, string productName)
+    {
+        var result = await productInstanceControllerProxy.Consume(id);
+        if (result.IsSuccess)
+        {
+            notificationService.Notify(NotificationSeverity.Success, $"Product {productName} Consumed");
+            await LoadInventory();
+        }
+        else
+        {
+            notificationService.Notify(NotificationSeverity.Error, $"Product {productName} cannot be consumed",result.Error.ErrorCode);
+        }
     }
 }
