@@ -1,30 +1,45 @@
 ﻿@page "/manage-rooms"
 
 @inject Services.RoomControllerProxy roomControllerService
+@inject Services.ShelfControllerProxy shelfControllerService
 @inject NotificationService NotificationService
 <h1>Manage Rooms</h1>
 
 <div class="row">
-    <div class="col-xl-6" style="margin-bottom: 16px">
+    <div class="col-xl-6" >
         <div class="row">
-            <div class="col-md-6" style="margin-bottom: 16px">
-                <RadzenTree Data=@rooms Style="width: 100%; height: 300px" @bind-Value=@selectedRoom>
-                    <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Shelves">
-                        <Template>
-                            <strong>@((context.Value as GetAllRoomsResponseItem).Name)</strong>
-                            @*<RadzenButton Click=@(args => OnClick("Button with icon")) Icon="mode_edit" Style="margin-bottom: 20px; width: 80px" />*@
-                        </Template>
-                    </RadzenTreeLevel>
-                    <RadzenTreeLevel TextProperty="Name" HasChildren=@(shelf => false) />
-                </RadzenTree>
-                <RadzenButton Text="Add a new Room" Click=@(args => AddRoom()) />
+            <div >
+                @if (isLoading)
+                {
+                    <p>Loading rooms and shelves ...</p>
+                }
+                else
+                {
+                    <div class="btn-group" role="group" aria-label="Manage room actions">
+                        <button type="button" class="btn btn-primary" @onclick="@(args => AddRoom())">Add room</button>
+                        @if (selectedRoom != null)
+                        {
+                            <button type="button" class="btn btn-primary" disabled="@(selectedRoom == null)" @onclick="@(args => AddShelf())">Add shelf in @selectedRoom?.Name</button>
+                        }
+                    </div>
+                    <div>
+                        <RadzenTree Data=@rooms  Change="@(args => SelectRoom(args.Value as GetAllRoomsResponseItem))">
+                            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Shelves">
+                                <Template>
+                                    <strong>@((context.Value as GetAllRoomsResponseItem).Name)</strong>
+                                </Template>
+                            </RadzenTreeLevel>
+                            <RadzenTreeLevel TextProperty="Name" HasChildren=@(shelf => false) />
+                        </RadzenTree>
+                    </div>
+                }
             </div>
         </div>
     </div>
     <div class="col-xl-6" style="margin-bottom: 16px">
         <div class="row">
             <div class="col-md-6" style="margin-bottom: 16px">
-                @if (addRoom)
+                @if (displayAddRoom)
                 {
                     <h2>Add a new Room</h2>
                     <EditForm Model="@newRoom" OnValidSubmit="@HandleAddRoom">
@@ -38,9 +53,19 @@
                         <button type="submit" disabled=@submitDisabled>Add</button>
                     </EditForm>
                 }
-                else if (addShelf)
+                else if (displayAddShelf)
                 {
                     <h2>Add a new Shelf in @selectedRoom.Name</h2>
+                    <EditForm Model="@newShelf" OnValidSubmit="@HandleAddShelf">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <div class="form-group">
+                            <label for="room-name">Name</label>
+                            <InputText id="room-name" @bind-Value="newShelf.ShelfName" />
+                        </div>
+                        <button type="submit" disabled=@submitDisabled>Add</button>
+                    </EditForm>
                 }
             </div>
         </div>
@@ -48,12 +73,14 @@
 </div>
 
 @code {
+    bool isLoading = true;
     bool submitDisabled = false;
-    bool addRoom = false;
-    bool addShelf = false;
+    bool displayAddRoom = false;
+    bool displayAddShelf = false;
     IEnumerable<GetAllRoomsResponseItem> rooms = null;
-    GetAllRoomsResponseItem selectedRoom = null;
+    GetAllRoomsResponseItem selectedRoom { get; set; } = null;
     AddRoomRequest newRoom = new AddRoomRequest();
+    AddShelfRequest newShelf = new AddShelfRequest();
 
     protected override Task OnInitializedAsync()
     {
@@ -64,12 +91,29 @@
     {
         var response = await roomControllerService.GetAll();
         rooms = response.Rooms;
+        isLoading = false;
+    }
+
+    void SelectRoom(GetAllRoomsResponseItem room)
+    {
+        selectedRoom = room;
     }
 
     protected void AddRoom()
     {
         newRoom = new AddRoomRequest();
-        addRoom = true;
+        displayAddRoom = true;
+        displayAddShelf = false;
+    }
+
+    protected void AddShelf()
+    {
+        displayAddRoom = false;
+        displayAddShelf = true;
+        newShelf = new AddShelfRequest
+        {
+            RoomId = selectedRoom.Id
+        };
     }
 
     private async Task HandleAddRoom()
@@ -78,13 +122,32 @@
         var response = await roomControllerService.AddRoom(newRoom);
         if (response.IsSuccess)
         {
-            addRoom = false;
-            NotificationService.Notify(NotificationSeverity.Success, "new Room created", $"{response.Data.RoomName}", 2000);
+            displayAddRoom = false;
             await Load();
+            displayAddRoom = false;
+            NotificationService.Notify(NotificationSeverity.Success, "new Room created", $"{response.Data.RoomName}", 2000);
         }
         else
         {
-            NotificationService.Notify(NotificationSeverity.Error, "Could not add room", response.Error.Message,5000);
+            NotificationService.Notify(NotificationSeverity.Error, "Could not add room", response.Error.Message, 5000);
+        }
+        submitDisabled = false;
+    }
+
+    private async Task HandleAddShelf()
+    {
+        submitDisabled = true;
+        var response = await shelfControllerService.Add(newShelf);
+        if (response.IsSuccess)
+        {
+            displayAddRoom = false;
+            await Load();
+            NotificationService.Notify(NotificationSeverity.Success, $"Shelf added in room {selectedRoom.Name}", $"{response.Data.Name}", 2000);
+            displayAddShelf = false;
+        }
+        else
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Could not add shelf", response.Error.Message, 5000);
         }
         submitDisabled = false;
     }
