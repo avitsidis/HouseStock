@@ -14,6 +14,12 @@ namespace HouseStock.Domain
         public virtual Product Product { get; set; }
         public virtual decimal Amount { get; set; }
         public virtual Unit AmountUnit { get; set; }
+        public virtual DateTime? ConsumedAt { get; set; }
+
+        public void Consume()
+        {
+            ConsumedAt = DateTime.Now;
+        }
 
     }
 }

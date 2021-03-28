@@ -35,7 +35,7 @@ namespace HouseStock.Presentation.Blazor.Server.Controllers
             var product = await houseStockDbContext.Products.FindAsync(productId);
             if (product == null)
             {
-                return BadRequest($"Product with id {request.ShelfId} does not exist");
+                return BadRequest($"Product with id {productId} does not exist");
             }
             var instance = product.AddInstance(shelf, new Domain.AddProductInstanceRequest { 
                 ExpirationDate = request.ExpirationDate,
@@ -44,6 +44,19 @@ namespace HouseStock.Presentation.Blazor.Server.Controllers
             });
             await houseStockDbContext.SaveChangesAsync();
             return Ok(new AddProductInstanceResponse { ProductInstanceId = instance.Id });
+        }
+
+        [HttpPost("/instances/{id}/consume")]
+        public async Task<ActionResult<Response<Empty>>> Consume([FromRoute] long id)
+        {
+            var instance = await houseStockDbContext.ProductInstances.FindAsync(id);
+            if (instance == null)
+            {
+                return BadRequest($"Product instance with id {id} does not exist");
+            }
+            instance.Consume();
+            await houseStockDbContext.SaveChangesAsync();
+            return Ok(Response<Empty>.Success(Empty.Instance));
         }
 
         [HttpGet]
@@ -55,7 +68,9 @@ namespace HouseStock.Presentation.Blazor.Server.Controllers
                 .Include(pi => pi.Product)
                 .Include(pi => pi.Shelf)
                 .Include(pi => pi.Shelf.Room)
-                .Include(pi => pi.Product.Category).ToListAsync();
+                .Include(pi => pi.Product.Category)
+                .Where(pi => pi.ConsumedAt == null)
+                .ToListAsync();
             return Ok(new GetInventoryResponse {
                 Items = items.Select(i => new InventoryItem {
                     Amount = i.Amount,

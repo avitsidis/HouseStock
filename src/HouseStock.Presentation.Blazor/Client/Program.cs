@@ -19,9 +19,11 @@ namespace HouseStock.Presentation.Blazor.Client
             builder.Services.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Debug));
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
             builder.Services.AddTransient<RoomControllerProxy>();
             builder.Services.AddTransient<ShelfControllerProxy>();
             builder.Services.AddTransient<ProductControllerProxy>();
+            builder.Services.AddTransient<ProductInstanceControllerProxy>();
             builder.Services.AddScoped<VersionControllerProxy>();
 
 
