@@ -11,19 +11,32 @@
 }
 else
 {
-    <RadzenGrid Data=@items AllowFiltering="true" AllowPaging="true" AllowSorting="true" TItem="InventoryItem" ColumnWidth="200px">
+    <RadzenGrid Data=@items AllowFiltering="true" AllowPaging="true" AllowSorting="true" TItem="InventoryItem">
         <Columns>
-            <RadzenGridColumn TItem="InventoryItem" Property="ProductName" />
-            <RadzenGridColumn TItem="InventoryItem" Property="ExpirationDate" />
-            <RadzenGridColumn TItem="InventoryItem" Property="Amount" />
-            <RadzenGridColumn TItem="InventoryItem" Property="AmountUnit" />
-            <RadzenGridColumn TItem="InventoryItem" Property="InventoryDate" />
-            <RadzenGridColumn TItem="InventoryItem" Property="ShelfName" />
-            <RadzenGridColumn TItem="InventoryItem" Property="RoomName" />
-            <RadzenGridColumn TItem="InventoryItem" Property="CategoryName" />
-            <RadzenGridColumn TItem="InventoryItem" Property="ProductInstanceId" Title="Consumed?">
+            <RadzenGridColumn TItem="InventoryItem" Property="ProductName" Title="Product" />
+            <RadzenGridColumn TItem="InventoryItem" Property="CategoryName" Title="Category" />
+            <RadzenGridColumn TItem="InventoryItem" Property="ExpirationDate" Title="ExpireOn" Filterable="false">
                 <Template Context="data">
-                    <RadzenButton Text="Consumed" Click="@(args => ConsumeAsync(data.ProductInstanceId, data.ProductName))" />
+                    @string.Format("dd/MM/yyyy", data.ExpirationDate)
+                </Template>
+            </RadzenGridColumn>
+            <RadzenGridColumn TItem="InventoryItem" Property="Amount" Title="Amount">
+                <Template Context="data">
+                    @data.Amount
+                    @if (@data.AmountUnit != AmountUnit.Item)
+                    {
+                        @data.AmountUnit
+                    }
+                </Template>
+            </RadzenGridColumn>
+            <RadzenGridColumn TItem="InventoryItem" Property="ShelfName" Title="Location">
+                <Template Context="data">
+                    @data.RoomName / @data.ShelfName
+                </Template>
+            </RadzenGridColumn>
+            <RadzenGridColumn TItem="InventoryItem" Property="ProductInstanceId" Title="Actions">
+                <Template Context="data">
+                    <RadzenButton Text="Consume" Click="@(args => ConsumeAsync(data.ProductInstanceId, data.ProductName))" />
                 </Template>
             </RadzenGridColumn>
         </Columns>
@@ -62,7 +75,7 @@ else
         }
         else
         {
-            notificationService.Notify(NotificationSeverity.Error, $"Product {productName} cannot be consumed",result.Error.ErrorCode);
+            notificationService.Notify(NotificationSeverity.Error, $"Product {productName} cannot be consumed", result.Error.ErrorCode);
         }
     }
 }
