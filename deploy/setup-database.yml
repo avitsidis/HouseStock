@@ -12,23 +12,25 @@
       login_password: '{{ root_pass }}'
   
   - name: Set application user
+    no_log: true
     mysql_user:
       login_host: 'localhost'
       login_user: 'root'
       login_password: '{{ root_pass }}'
-      host: '%'
       name: 'housestock-{{ env }}'
+      host: '%'
       password: '{{ application_user_password }}'
       priv: 'housestock-{{ env }}.*:SELECT,INSERT,DELETE,UPDATE'
       state: present
         
   - name: Set migration user
+    no_log: true
     mysql_user:
       login_host: 'localhost'
       login_user: 'root'
       login_password: '{{ root_pass }}'
-      host: '%'
       name: 'housestock-migration-{{ env }}'
+      host: '%'
       password: '{{ migration_user_password }}'
       priv: 'housestock-{{ env }}.*:ALTER,CREATE,SELECT,INSERT,DELETE,UPDATE,INDEX,DROP'
       state: present
