@@ -23,6 +23,27 @@ namespace HouseStock.DataAccess
             modelBuilder.ApplyConfiguration(new CategoryTypeConfiguration());
 
             ConfigureNameProperties(modelBuilder);
+
+            ConfigureShelf(modelBuilder);
+        }
+
+        private void ConfigureShelf(ModelBuilder modelBuilder)
+        {
+            modelBuilder
+                .Entity<Shelf>()
+                .Property(s => s.Name)
+                .IsRequired(true)
+                .HasMaxLength(100);
+
+            modelBuilder
+                .Entity<Shelf>()
+                .HasOne(p => p.Room)
+                .WithMany(r => r.Shelves);
+
+            modelBuilder
+                .Entity<Shelf>()
+                .HasIndex(nameof(Shelf.Room) + nameof(Room.Id), nameof(Shelf.Name))
+                .IsUnique();
         }
 
         private void ConfigureNameProperties(ModelBuilder modelBuilder)

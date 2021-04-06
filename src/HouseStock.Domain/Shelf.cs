@@ -2,7 +2,7 @@
 
 namespace HouseStock.Domain
 {
-    public class Shelf : NamedEntity
+    public class Shelf : Entity // Should be NamedEntity but we don't use the interface as we want uniqueness on both roomdId and Name
     {
         protected Shelf()
         {
@@ -17,5 +17,6 @@ namespace HouseStock.Domain
         }
         public IList<ProductInstance> ProductInstances { get; set; }
         public virtual Room Room { get; protected set; }
+        public virtual string Name { get; set; }
     }
 }
