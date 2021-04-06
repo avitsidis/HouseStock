@@ -17,7 +17,7 @@ else
             <RadzenGridColumn TItem="InventoryItem" Property="CategoryName" Title="Category" />
             <RadzenGridColumn TItem="InventoryItem" Property="ExpirationDate" Title="ExpireOn" Filterable="false">
                 <Template Context="data">
-                    @string.Format("dd/MM/yyyy", data.ExpirationDate)
+                    @data.ExpirationDate.ToString("dd/MM/yyyy")
                 </Template>
             </RadzenGridColumn>
             <RadzenGridColumn TItem="InventoryItem" Property="Amount" Title="Amount">
