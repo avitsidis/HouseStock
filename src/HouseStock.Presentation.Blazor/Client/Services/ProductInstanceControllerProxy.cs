@@ -25,7 +25,7 @@ namespace HouseStock.Presentation.Blazor.Client.Services
                 var response = await client.PostAsJsonAsync($"/instances/{productInstanceId}/consume","");
                 response.EnsureSuccessStatusCode();
                 using var responseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<Empty>(responseStream);
+                var result = await JsonSerializerWrapper.DeserializeAsync<Empty>(responseStream);
                 return Response<Empty>.Success(result);
             }
             catch (Exception e)

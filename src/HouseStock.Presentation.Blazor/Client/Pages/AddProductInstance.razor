@@ -4,86 +4,97 @@
 @inject Services.ProductControllerProxy productControllerProxy
 @inject ILogger<AddProductInstance> logger;
 
-<RadzenSteps @ref="steps">
-    <Steps>
+<div>
+    <h2>Add an item</h2>
+</div>
+<div>
+    <button type="button" class="btn btn-primary btn-sm" @onclick="(_) => MoveToPreviousStep()" disabled="@currentStep.IsFirstStep">Back</button>
+</div>
+<div>
+    @if (currentStep == stepProduct)
+    {
+        <h3>Select a Product</h3>
+        <RadzenTextBox @bind-Value=@search Change=@OnSearch @oninput=@(args => OnSearch(args.Value.ToString())) />
+        <RadzenGrid @ref="datagrid" EmptyText="Loading Products" RowSelect=ProductSelected Count="@count" Data="@products" AllowSorting="false" AllowFiltering="false" AllowPaging="false" TItem="SearchProductItem" ColumnWidth="200px">
+            <Columns>
+                <RadzenGridColumn TItem="SearchProductItem" Property="Name" Title="Product Name" />
+                <RadzenGridColumn TItem="SearchProductItem" Property="CategoryName" Title="Category" />
+            </Columns>
+        </RadzenGrid>
+    }
+    else if (currentStep == stepShelf)
+    {
+        <h3>Select a Shelf</h3>
+        <div>
+            <RadzenTree Change=@OnShelfTreeChange Data=@rooms Style="width: 100%; height: 300px">
+                <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Shelves">
+                    <Template>
+                        <strong>@((context.Value as GetAllRoomsResponseItem).Name)</strong>
+                    </Template>
+                </RadzenTreeLevel>
+                <RadzenTreeLevel TextProperty="Name" HasChildren=@(p => false) />
+            </RadzenTree>
 
-        <RadzenStepsItem Text="Product">
-
-            <RadzenTextBox @bind-Value=@search Change=@OnSearch @oninput=@(args => OnSearch(args.Value.ToString())) />
-            <RadzenGrid @ref="datagrid" EmptyText="Loading Products" RowSelect=ProductSelected Count="@count" Data="@products" AllowSorting="false" AllowFiltering="false" AllowPaging="false" TItem="SearchProductItem" ColumnWidth="200px">
-                <Columns>
-                    <RadzenGridColumn TItem="SearchProductItem" Property="Name" Title="Product Name" />
-                    <RadzenGridColumn TItem="SearchProductItem" Property="CategoryName" Title="Category" />
-                </Columns>
-            </RadzenGrid>
-
-        </RadzenStepsItem>
-        <RadzenStepsItem Text="Shelf">
-
-            <div>
-                <RadzenTree Change=@OnShelfTreeChange Data=@rooms Style="width: 100%; height: 300px">
-                    <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Shelves">
-                        <Template>
-                            <strong>@((context.Value as GetAllRoomsResponseItem).Name)</strong>
-                        </Template>
-                    </RadzenTreeLevel>
-                    <RadzenTreeLevel TextProperty="Name" HasChildren=@(p => false) />
-                </RadzenTree>
-
+        </div>
+    }
+    else if (currentStep == stepAddInstance)
+    {
+        <h4>Add a @selectedProduct.Name in @selectedShelf.Name</h4>
+        @if (response.IsFail)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+                <p><strong>Error:</strong> A problem has been occurred while submitting your data.</p>
+                <p><strong>@response.Error.ErrorCode</strong>: @response.Error.Message</p>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
             </div>
-        </RadzenStepsItem>
-        <RadzenStepsItem Text="Add new instance">
-            @if (selectedProduct == null || selectedShelf == null)
-            {
-                @if (selectedProduct == null)
-                {
-                    <p>Please select a product first</p>
-                }
-                else
-                {
-                    <p>Please select a shelf first</p>
-                }
-            }
-            else
-            {
-                @if (response.IsFail)
-                {
-                    <div class="alert alert-danger alert-dismissible fade show">
-                        <p><strong>Error:</strong> A problem has been occurred while submitting your data.</p>
-                        <p><strong>@response.Error.ErrorCode</strong>: @response.Error.Message</p>
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    </div>
-                }
+        }
 
-                <div>
-                    ExpirationDate
-                    <RadzenDatePicker @bind-Value=@request.ExpirationDate DateFormat="dd/MM/yyyy" />
-                </div>
-                <div>
-                    Amount
-                    <RadzenNumeric @bind-Value=@request.Amount TValue="decimal" Placeholder="0" Step="1" />
-                    <RadzenSelectBar @bind-Value=@request.AmountUnit TValue="AmountUnit">
-                        <Items>
-                            <RadzenSelectBarItem Text="Gram" Value="AmountUnit.Gram" />
-                            <RadzenSelectBarItem Text="Liter" Value="AmountUnit.Liter" />
-                            <RadzenSelectBarItem Text="Item" Value="AmountUnit.Item" />
-                        </Items>
-                    </RadzenSelectBar>
-                </div>
-                <RadzenButton Click=HandleValidSubmit Text="Add" Style="margin-bottom: 20px; width: 150px" />
-            }
-        </RadzenStepsItem>
+        <div>
+            ExpirationDate
+            <RadzenDatePicker @bind-Value=@request.ExpirationDate DateFormat="dd/MM/yyyy" />
+        </div>
+        <div>
+            Amount
+            <RadzenNumeric @bind-Value=@request.Amount TValue="decimal" Placeholder="0" Step="1" />
+            <RadzenSelectBar @bind-Value=@request.AmountUnit TValue="AmountUnit">
+                <Items>
+                    <RadzenSelectBarItem Text="Gram" Value="AmountUnit.Gram" />
+                    <RadzenSelectBarItem Text="Liter" Value="AmountUnit.Liter" />
+                    <RadzenSelectBarItem Text="Item" Value="AmountUnit.Item" />
+                </Items>
+            </RadzenSelectBar>
+        </div>
+        <RadzenButton Click=HandleValidSubmit Text="Add" Style="margin-bottom: 20px; width: 150px" />
+    }
 
-    </Steps>
-</RadzenSteps>
-
-
-
-
+</div>
 @code {
+
+
+
+    public class Step
+    {
+        public Step NextStep { get; private set; }
+        public Step PreviousStep { get; private set; }
+        public void SetNext(Step nextStep)
+        {
+            NextStep = nextStep;
+            nextStep.PreviousStep = this;
+        }
+
+        public bool IsFirstStep => PreviousStep == null;
+
+    }
+
+    LinkedList<Step> steps = new LinkedList<Step>();
+
+
     SearchProductItem selectedProduct;
     RadzenGrid<SearchProductItem> datagrid;
-    RadzenSteps steps;
+    Step stepProduct = new Step();
+    Step stepShelf = new Step();
+    Step stepAddInstance = new Step();
+    Step currentStep;
     RadzenSelectBar<long> roomsSelect;
     RadzenSelectBar<long> shelvesSelect;
     AddProductInstanceRequest request = new AddProductInstanceRequest();
@@ -98,6 +109,9 @@
 
     protected override async Task OnInitializedAsync()
     {
+        stepProduct.SetNext(stepShelf);
+        stepShelf.SetNext(stepAddInstance);
+        currentStep = stepProduct;
         await LoadProducts(null);
         var response = await roomControllerProxy.GetAll();
         rooms = response.Rooms;
@@ -108,6 +122,7 @@
         if (args.Value is ShelfItem)
         {
             selectedShelf = (ShelfItem)args.Value;
+            MoveToNextStep();
         }
     }
 
@@ -142,6 +157,22 @@
     void ProductSelected(SearchProductItem selectedProduct)
     {
         this.selectedProduct = selectedProduct;
+        MoveToNextStep();
+    }
+
+    private void MoveToNextStep()
+    {
+        currentStep = currentStep.NextStep ?? currentStep;
+    }
+
+    private void MoveToPreviousStep()
+    {
+        currentStep = currentStep.PreviousStep ?? currentStep;
+    }
+
+    private void GoTo(Step step)
+    {
+        currentStep = step;
     }
 
 
@@ -153,7 +184,7 @@
         submitDisabled = false;
         if (response.IsSuccess)
         {
-
+            
         }
     }
 

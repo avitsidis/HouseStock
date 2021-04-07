@@ -31,7 +31,7 @@ namespace HouseStock.Presentation.Blazor.Client.Services
                 var response = await client.PostAsJsonAsync("product", roomRequest);
                 response.EnsureSuccessStatusCode();
                 using var responseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<AddProductResponse>(responseStream);
+                var result = await JsonSerializerWrapper.DeserializeAsync<AddProductResponse>(responseStream);
                 return Response<AddProductResponse>.Success(result);
             }
             catch (System.Exception e)
@@ -49,7 +49,7 @@ namespace HouseStock.Presentation.Blazor.Client.Services
                 var response = await client.PostAsJsonAsync($"product/{productId}/instances", addProductInstanceRequest);
                 response.EnsureSuccessStatusCode();
                 using var responseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<AddProductInstanceResponse>(responseStream);
+                var result = await JsonSerializerWrapper.DeserializeAsync<AddProductInstanceResponse>(responseStream);
                 return Response<AddProductInstanceResponse>.Success(result);
             }
             catch (System.Exception e)
@@ -66,9 +66,7 @@ namespace HouseStock.Presentation.Blazor.Client.Services
                 var response = await client.GetAsync($"product?partName={name}&limit={limit}");
                 response.EnsureSuccessStatusCode();
                 using var responseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<SearchProductResponse>(responseStream,new JsonSerializerOptions() { 
-                PropertyNameCaseInsensitive = true
-                });
+                var result = await JsonSerializerWrapper.DeserializeAsync<SearchProductResponse>(responseStream);
                 logger.LogDebug($"result.Products.Count = {result.Products.Count}");
                 return Response<SearchProductResponse>.Success(result);
             }
@@ -87,10 +85,7 @@ namespace HouseStock.Presentation.Blazor.Client.Services
                 var response = await client.GetAsync($"product/all/instances");
                 response.EnsureSuccessStatusCode();
                 using var responseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<GetInventoryResponse>(responseStream, new JsonSerializerOptions()
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+                var result = await JsonSerializerWrapper.DeserializeAsync<GetInventoryResponse>(responseStream);
                 logger.LogDebug($"result.Items.Count = {result.Items.Count}");
                 return Response<GetInventoryResponse>.Success(result);
             }

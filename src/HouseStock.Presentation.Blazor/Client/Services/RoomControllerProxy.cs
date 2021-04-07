@@ -22,10 +22,7 @@ namespace HouseStock.Presentation.Blazor.Client.Services
                 var response = await client.PostAsJsonAsync("room", roomRequest);
                 response.EnsureSuccessStatusCode();
                 using var responseStream = await response.Content.ReadAsStreamAsync();
-                var data = await JsonSerializer.DeserializeAsync<AddRoomResponse>(responseStream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+                var data = await JsonSerializerWrapper.DeserializeAsync<AddRoomResponse>(responseStream);
                 return Response<AddRoomResponse>.Success(data);
             }
             catch (System.Exception e)
@@ -38,7 +35,7 @@ namespace HouseStock.Presentation.Blazor.Client.Services
 
         public async Task<GetAllRoomsResponse> GetAll()
         {
-            var response = await client.GetFromJsonAsync<GetAllRoomsResponse>("room", new JsonSerializerOptions {PropertyNameCaseInsensitive = true });
+            var response = await client.GetFromJsonAsync<GetAllRoomsResponse>("room");
             return response;
         }
 
