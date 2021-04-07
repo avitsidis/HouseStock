@@ -3,6 +3,7 @@
 @inject Services.RoomControllerProxy roomControllerProxy
 @inject Services.ProductControllerProxy productControllerProxy
 @inject ILogger<AddProductInstance> logger;
+@inject NotificationService NotificationService;
 
 <div>
     <h2>Add an item</h2>
@@ -184,7 +185,7 @@
         submitDisabled = false;
         if (response.IsSuccess)
         {
-            
+            NotificationService.Notify(NotificationSeverity.Success, $"item {selectedProduct.Name} created", $"with id {response.Data.ProductInstanceId}");
         }
     }
 
