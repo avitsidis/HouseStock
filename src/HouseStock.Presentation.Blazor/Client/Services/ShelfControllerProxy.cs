@@ -22,7 +22,7 @@ namespace HouseStock.Presentation.Blazor.Client.Services
                 var response = await client.PostAsJsonAsync("shelf", roomRequest);
                 response.EnsureSuccessStatusCode();
                 using var responseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<AddShelfResponse>(responseStream);
+                var result = await JsonSerializerWrapper.DeserializeAsync<AddShelfResponse>(responseStream);
                 return Response<AddShelfResponse>.Success(result);
             }
             catch (System.Exception e)
